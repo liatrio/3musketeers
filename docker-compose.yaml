@@ -1,0 +1,32 @@
+version: '3'
+services:
+  alpine:
+    image: alpine:3.18.2
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  aws:
+    image: amazon/aws-cli:2.13.6
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  gradle:
+    image: gradle:jdk17-focal
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  java:
+    image: eclipse-temurin:17-jdk-jammy
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  k8s:
+    image: alpine/k8s:1.24.16
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  terraform:
+    image: hashicorp/terraform:1.5
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
