@@ -1,4 +1,4 @@
-COMPOSE = docker-compose
+COMPOSE = docker compose
 COMPOSE_RUN = ${COMPOSE} run --rm --remove-orphans
 COMPOSE_RUN_TARGET = ${COMPOSE_RUN} $@
 
