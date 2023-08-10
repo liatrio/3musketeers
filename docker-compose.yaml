@@ -16,7 +16,7 @@ services:
       - .:/var/opt/app
     working_dir: /var/opt/app
   java:
-    image: eclipse-temurin:17-jdk-jammy
+    image: eclipse-temurin:17.0.8_7-jdk-jammy
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
