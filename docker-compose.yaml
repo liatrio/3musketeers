@@ -6,7 +6,7 @@ services:
       - .:/var/opt/app
     working_dir: /var/opt/app
   aws:
-    image: amazon/aws-cli:2.13.6
+    image: amazon/aws-cli:2.13.8
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
