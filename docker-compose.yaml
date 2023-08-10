@@ -1,7 +1,7 @@
 version: '3'
 services:
   alpine:
-    image: alpine:3.18.2
+    image: alpine:3.18.3
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
