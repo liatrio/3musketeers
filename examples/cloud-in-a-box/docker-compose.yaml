@@ -37,7 +37,7 @@ services:
       - localstack
     external_links:
       - "localstack:localhost.localstack.cloud"
-    build: ..
+    build: .
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app

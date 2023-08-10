@@ -3,17 +3,17 @@ This example provides a working AWS cloud via LocalStack[^1] along with an EKS K
 
 It can serve as a local playground, starting point for local application development and testing, or just a way to get more familiar with containers, Kubernetes, terraform, and the other tools used here.
 
-also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example.
+Also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
 
-## guide
-this guide walks you through the creation of a local Kubernetes cluster and sample app deployment.
+## Guide
+This guide walks you through the creation of a local Kubernetes cluster and sample app deployment.
 
 ### LocalStack
-This step will start a local AWS cloud with many emulated services.
+In this section we'll start a local AWS cloud with **many** _emulated_ services.
 
 1. Copy the `env.example` and set your LocalStack API key
    ```shell
-   cp env.example .env  # Update the .env file with your LocalStack API key
+   cp env.example .env  # Next update the .env file with your LocalStack API key
    ```
 2. Start the LocalStack cloud environment
    ```shell
@@ -40,14 +40,14 @@ Now we can run our Infrastructure as Code (IaC) to create a working _emulated_ E
    make -- terraform apply -auto-approve
    ```
 
-At this point we have a functional EKS cluster and other resources defined in the `main.tf` Terraform file.
+At this point we have a functional EKS cluster as well as the other resources defined in the `main.tf` Terraform file.
 
-Let's exercise some of the tools and inspect our infrastructure.
+Let's exercise some of the tools and inspect our infrastructure!
 
 ### AWS CLI
 LocalStack typically uses an _awslocal_ wrapper which points the official AWS CLI at the local cloud instance.  We emulate that same behavior using an `awslocal` target in our 3Musketeers setup.
 
-1. Check our setup and confirm connectivity with LocalStack (dummy caller / account data is returned)
+1. Check setup and confirm connectivity with LocalStack (dummy caller / account data is returned)
    ```shell
    make awslocal sts get-caller-identity
    ```
@@ -147,7 +147,7 @@ Now let's remove _everything_ 😁
    **`NOTE`** This removes all resources associate with the namespace we created initially in a single step
 2. Destroy all the infrastructure via Terraform
    ```shell
-   make terraform destroy  ## type 'yes' at the prompt to delete *everything*
+   make terraform destroy  # type 'yes' at the prompt to delete *everything*
    ``` 
    
    Now you can shut down LocalStack if you wish.
