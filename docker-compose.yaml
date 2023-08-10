@@ -1,12 +1,12 @@
 version: '3'
 services:
   alpine:
-    image: alpine:3.18.2
+    image: alpine:3.18.3
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
   aws:
-    image: amazon/aws-cli:2.13.6
+    image: amazon/aws-cli:2.13.8
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
@@ -16,12 +16,12 @@ services:
       - .:/var/opt/app
     working_dir: /var/opt/app
   java:
-    image: eclipse-temurin:17-jdk-jammy
+    image: eclipse-temurin:17.0.8_7-jdk-jammy
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
   k8s:
-    image: alpine/k8s:1.24.16
+    image: alpine/k8s:1.27.4
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
