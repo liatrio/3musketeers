@@ -13,6 +13,8 @@ services:
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
+    environment:
+      - TF_LOG=${TF_LOG}
   aws:
     networks:
       - localstack

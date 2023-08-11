@@ -154,27 +154,40 @@ Now let's remove _everything_ 😁
 
 🏁 That's the end of this guide!  
 
-## LocalStack Configuration
-The following settings in the `.env` file can be used to alter LocalStack behavior.
+## Configuration
+The following settings in the `.env` file can be used to alter various behaviors.
+
+### LocalStack
 
 <dl>
 <dt>LOCALSTACK_DEBUG</dt>
 <dd>
-    <code>0</code> use standard log level  <code>default</code><br/>
-    <code>1</code> enable debug logging
+    <code>0</code> - use standard log level  <code>default</code><br/>
+    <code>1</code> - enable debug logging
 </dd>
 <dt>LOCALSTACK_PERSISTENCE</dt>
 <dd>
-    <code>0</code> reset cloud state each restart <br/>
-    <code>1</code> persist cloud state between restarts  <code>default</code>
+    <code>0</code> - reset cloud state each restart <br/>
+    <code>1</code> - persist cloud state between restarts  <code>default</code>
 </dd>
 <dt>LOCALSTACK_SNAPSHOT_SAVE_STRATEGY</dt>
 <dd>This settings controls the method and frequency for cloud state persistence.  The  <code>default</code> option <code>ON_REQUEST</code> persists state on every API call.  See <a href="https://docs.localstack.cloud/references/persistence-mechanism/#save-strategies" target="_blank">LocalStack Persistence Mechanism - Save Strategies</a> for other options you can set here.
 </dd>
 <dt>LOCALSTACK_ACTIVATE_PRO</dt>
 <dd>
-    <code>0</code> disable LocalStack Pro features<br/>
-    <code>1</code> enable LocalStack Pro features (required for this example) <code>default</code>
+    <code>0</code> - disable LocalStack Pro features<br/>
+    <code>1</code> - enable LocalStack Pro features (required for this example) <code>default</code>
+</dd>
+</dl>
+
+### Terraform
+
+<dl>
+<dt>TF_LOG</dt>
+<dd>
+    <code><i>unset</i></code> - use the default Terraform logging level  <code>default</code> <br/>
+    <code>DEBUG</code> - enable DEBUG level logging <br/>
+   This setting changes the Terraform log level to facilitate troubleshooting. See <a href="https://developer.hashicorp.com/terraform/internals/debugging" target="_blank">Debugging Terraform</a> for valid values.
 </dd>
 </dl>
 
