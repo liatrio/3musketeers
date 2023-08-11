@@ -185,7 +185,7 @@ The following settings in the `.env` file can be used to alter various behaviors
 <dl>
 <dt>TF_LOG</dt>
 <dd>
-    <code><i>unset</i></code> - use the default Terraform logging level  <code>default</code> <br/>
+    <code>INFO</code> - log INFO and higher level messages <code>default</code> <br/>
     <code>DEBUG</code> - enable DEBUG level logging <br/>
    This setting changes the Terraform log level to facilitate troubleshooting. See <a href="https://developer.hashicorp.com/terraform/internals/debugging" target="_blank">Debugging Terraform</a> for valid values.
 </dd>
