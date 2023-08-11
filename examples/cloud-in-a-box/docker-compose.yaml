@@ -20,13 +20,13 @@ services:
       - localstack
     external_links:
       - "localstack:localhost.localstack.cloud"
-    image: amazon/aws-cli:2.13.6
+    image: amazon/aws-cli:2.13.8
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
     env_file: .env
   k8s:
-    image: alpine/k8s:1.24.16
+    image: alpine/k8s:1.27.4
     networks:
       - localstack
     external_links:
