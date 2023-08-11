@@ -13,6 +13,7 @@ services:
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
+    user: "502:20"
   aws:
     networks:
       - localstack
