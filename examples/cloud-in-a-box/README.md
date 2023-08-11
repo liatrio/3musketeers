@@ -4,14 +4,7 @@ This example provides a working AWS cloud via LocalStack[^1] along with an EKS K
 
 It can serve as a local playground, starting point for local application development and testing, or just a way to get more familiar with containers, Kubernetes, terraform, and the other tools used here.
 
-Also, **_everything_
-** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
-
-**Note:** This guide assumes you have v2 of `docker compose` available (not the deprecated python `docker-compose` package). If you are _not_ using Docker Desktop, you may need to create a symlink for Docker to find the plugin, e.g.:
-```
-mkdir -p ~/.docker/cli-plugins
-ln -sfn $HOMEBREW_PREFIX/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
-```
+Also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
 
 ## Guide
 
