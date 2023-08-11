@@ -54,7 +54,14 @@ Skip to the section corresponding to your OS and follow the instructions there.
 3. Install [Docker](https://www.docker.com/)
     Install Docker Desktop (Community Edition) with `brew install --cask docker`.
 
-    Try [Colima](brew install --cask docker) if the Docker license is an issue.
+    Try [Colima](https://github.com/abiosoft/colima#installation) if the Docker license is an issue.
+
+   **`NOTE`** This guide assumes you have v2 of `docker compose` available (not the deprecated Python `docker-compose` package). If you are _not_ using Docker Desktop, you may need to create a symlink for Docker to find the plugin, e.g.
+    ```
+    mkdir -p ~/.docker/cli-plugins
+    ln -sfn $HOMEBREW_PREFIX/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+    ```
+   _Homebrew example, adapt as-needed_
 
 4. If you installed Docker Desktop, you should already have Compose.  Run `docker compose --version` in a terminal to verify.
 

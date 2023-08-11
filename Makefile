@@ -6,7 +6,7 @@
 
 # These just enable reuse and single-place modification of common commands
 COMPOSE = docker compose
-COMPOSE_RUN = ${COMPOSE} run --rm --remove-orphans
+COMPOSE_RUN = ${COMPOSE} run -u $$(id -u):$$(id -g) --rm --remove-orphans
 COMPOSE_RUN_TARGET = ${COMPOSE_RUN} $@
 
 help:       ## Show this help

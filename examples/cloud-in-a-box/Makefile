@@ -3,7 +3,7 @@
 
 # These just enable reuse and single-place modification of common commands
 COMPOSE = docker compose -p cloud_in_a_box
-COMPOSE_RUN = ${COMPOSE} run --rm
+COMPOSE_RUN = ${COMPOSE} run -u $$(id -u):$$(id -g) --env HOME="." --env USER=$${USER} --rm
 
 # NOTE this setting requires Docker Compose v2 to work
 export COMPOSE_IGNORE_ORPHANS = True
@@ -14,7 +14,10 @@ export COMPOSE_IGNORE_ORPHANS = True
 # NOTE .PHONY denotes that the target does _not_ correspond to any local file of the same name (true of all our targets)
 .PHONY: $(MAKECMDGOALS)
 
-# This parses additional arguments beyond the target and stores them in a variable for later use
+# Extract first target passed to make
+CMD := $(wordlist 1,1,$(MAKECMDGOALS))
+
+# This parses additional arguments beyond the first target and stores them in a variable for later use
 CMD_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 ##Welcome to the Cloud-in-a-Box Toolkit 🛠️
@@ -32,6 +35,8 @@ CMD_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 help:       ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+# Don't define any targets if we're just trying to invoke a shell on a compose service (avoids make redefine warnings)
+ifneq ($(CMD),shell)
 localstack: ## Start localstack (Pro)
 	${COMPOSE} -f localstack-compose.yaml up
 
@@ -62,6 +67,7 @@ k9s:        ## Run the k9s kubernetes (CLI) management tool
                    --env AWS_ACCESS_KEY_ID=access_key \
                    --env AWS_SECRET_ACCESS_KEY=secret_key \
                    k9s --kubeconfig kube.config
+endif
 
 shell:      ## Obtain a shell in the given compose service / container (e.g. `make shell aws`)
-	${COMPOSE_RUN} --entrypoint /bin/sh $(CMD_ARGS)
+	${COMPOSE_RUN} --entrypoint /bin/sh $(CMD_ARGS) && exit
