@@ -8,14 +8,22 @@
 # Env
 .env
 
+# Config
+.config/
+
+# Shell
+.*sh_history
+
 # LocalStack
 volume/
 
 # k8s
+.kube/
 kube.config
 
 # Local .terraform directories
-**/.terraform/*
+.terraform
+.terraform.d
 
 # .tfstate files
 *.tfstate
