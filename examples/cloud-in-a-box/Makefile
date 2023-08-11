@@ -3,7 +3,7 @@
 
 # These just enable reuse and single-place modification of common commands
 COMPOSE = docker compose -p cloud_in_a_box
-COMPOSE_RUN = ${COMPOSE} run --rm
+COMPOSE_RUN = ${COMPOSE} run -u $$(id -u):$$(id -g) --rm
 
 # NOTE this setting requires Docker Compose v2 to work
 export COMPOSE_IGNORE_ORPHANS = True
