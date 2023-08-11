@@ -79,25 +79,6 @@ This software is optional, but _highly_ recommended for the best experience.
 
 2. Install `make` with `sudo apt install -y make`.  After installation, `make --version` should show the installed version.
 
-🔀 From here you can either install Docker directly in the [WSL 2 Linux](#wsl-2-linux) environment, _or_ install [Docker Desktop](#docker-desktop) and set it to use WSL 2 as the runtime.  Choose _only one_ of the following sections/approaches.
-
-#### WSL 2 Linux
-
-1. Start WSL 2 in Windows Terminal, then run the following commands to install and start Docker:
-    ```shell
-    sudo apt install -y docker.io
-    sudo service docker start
-    ```
-
-2. Next run `sudo gpasswd -a $USER docker`, then log out of the current shell and back in for the group membership change to take effect.  This enables you to run `docker` commands without having to use `sudo`.
-
-    Now you should be able to run `docker ps` and get an empty Docker container list (headings only).
- 
-3. Follow the official Docker Compose installation guide to [install using the registry](https://docs.docker.com/compose/install/linux/#install-using-the-repository).  Use the _Ubuntu_ distro instructions for the "Setup the Repository" step, then return to the original instructions.  You should be able to run `docker compose version` afterward.
-
-    **`NOTE`** If `docker compose version` doesn't work, but `docker-compose` does, then you have Docker Compose v1 and need to remove it and install v2 following the instructions above.
- 
-
 #### Docker Desktop
 
 1. Follow the steps in [Turn on Docker Desktop WSL 2](https://docs.docker.com/desktop/wsl/#turn-on-docker-desktop-wsl-2) to install Docker Desktop and set it to use WSL 2 as the runtime.  If you've already installed Docker Desktop via another method, confirm that WSL 2 is the engine configured for Docker.
@@ -111,5 +92,13 @@ This software is optional, but _highly_ recommended for the best experience.
 
 ## Troubleshooting
 
-#### WSL permission denied running `docker`
-Check that you added your user to the `docker` group in the [WSL 2 Linux](#wsl-2-linux) steps and logged out / back in.
+#### Makefile: *** multiple target patterns. Stop.
+This can happen when passing complex arguments through to underlying tools via `make` due to characters that make tries to interpret directly.
+
+To fix the issue, escape characters such as `:` like this:
+```shell
+make -- awslocal eks create-cluster \
+     --name cluster1 \
+     --role-arn "arn\:aws\:iam\:\:000000000000\:role/eks-role" \
+     --resources-vpc-config "{}"
+```

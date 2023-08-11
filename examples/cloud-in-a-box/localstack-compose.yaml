@@ -1,0 +1,26 @@
+version: '3.8'
+
+networks:
+  localstack:
+
+services:
+  localstack:
+    networks:
+      - localstack
+    image: localstack/localstack-pro:2.2
+    environment:
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
+      - DEBUG=${LOCALSTACK_DEBUG}
+      - PERSISTENCE=${LOCALSTACK_PERSISTENCE}
+      - SNAPSHOT_SAVE_STRATEGY=${LOCALSTACK_SNAPSHOT_SAVE_STRATEGY}
+      - ACTIVATE_PRO=${LOCALSTACK_ACTIVATE_PRO}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:53:53"                # DNS config (required for Pro)
+      - "127.0.0.1:53:53/udp"            # DNS config (required for Pro)
+      - "127.0.0.1:443:443"              # LocalStack HTTPS Gateway (required for Pro)
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock" # required for Lambda service

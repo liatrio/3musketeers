@@ -1,0 +1,43 @@
+version: '3.8'
+
+networks:
+  localstack:
+
+services:
+  terraform:
+    networks:
+      - localstack
+    external_links:
+      - "localstack:localhost.localstack.cloud"
+    image: hashicorp/terraform:1.5
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  aws:
+    networks:
+      - localstack
+    external_links:
+      - "localstack:localhost.localstack.cloud"
+    image: amazon/aws-cli:2.13.6
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+    env_file: .env
+  k8s:
+    image: alpine/k8s:1.24.16
+    networks:
+      - localstack
+    external_links:
+      - "localstack:localhost.localstack.cloud"
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  k9s:
+    networks:
+      - localstack
+    external_links:
+      - "localstack:localhost.localstack.cloud"
+    build: .
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
