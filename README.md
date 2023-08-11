@@ -54,7 +54,7 @@ Skip to the section corresponding to your OS and follow the instructions there.
 3. Install [Docker](https://www.docker.com/)
     Install Docker Desktop (Community Edition) with `brew install --cask docker`.
 
-    Try [Colima](brew install --cask docker) if the Docker license is an issue.
+    Try [Colima](https://github.com/abiosoft/colima#installation) if the Docker license is an issue.
 
 4. If you installed Docker Desktop, you should already have Compose.  Run `docker compose --version` in a terminal to verify.
 
