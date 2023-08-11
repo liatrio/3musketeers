@@ -7,7 +7,7 @@ services:
   localstack:
     networks:
       - localstack
-    image: localstack/localstack-pro
+    image: localstack/localstack-pro:2.2
     environment:
       - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
       - DEBUG=${LOCALSTACK_DEBUG}

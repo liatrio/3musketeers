@@ -41,12 +41,3 @@ services:
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
-#  k9s:
-#    networks:
-#      - localstack
-#    external_links:
-#      - "localstack:localhost.localstack.cloud"
-#    image: derailed/k9s:v0.27.4
-#    volumes:
-#      - .:/var/opt/app
-#    working_dir: /var/opt/app
