@@ -6,39 +6,85 @@ It can serve as a local playground, starting point for local application develop
 
 Also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
 
+## Preparation - DO THIS FIRST
+
+Run `make prep` to download the docker images you'll need for this example. It could take 5-10 minutes depending on your network connection, so you should run this **now**, then come back to read the rest of the readme.
+
+![](images/docker-images-ls.png)
+
+You could skip this step and let the images download as you run commands, but doing this first will make the rest of the walkthrough feel a lot faster.
+
 ## Guide
 
 This guide walks you through the creation of a local Kubernetes cluster and sample app deployment.
 
 ### LocalStack
 
+**Note:** You'll need a LocalStack Pro API Key. Go to https://app.localstack.cloud/ where you can sign up for a free account, and a 14-day trial. Once you start your trial you'll get an API key.
+
 In this section we'll start a local AWS cloud with **many** _emulated_ services.
 
-1. Copy the `env.example` and set your LocalStack API key
+1. Copy the `env.example` and set your LocalStack API key (ie the `LOCALSTACK_API_KEY` value in the .env file after you copy the example file)
    ```shell
-   cp env.example .env  # Next update the .env file with your LocalStack API key
+   cp env.example .env
    ```
+
 2. Start the LocalStack cloud environment
    ```shell
    make localstack
    ```
 
+![](images/local-stack.png)
+
+You should see:
+- "successfully activated API key"
+- "Found credentials in environment variables."
+- "hypercorn.error            : Running on https://0.0.0.0:XXX (CTRL + C to quit)"
+- "Execution of "start_runtime_components" took XXX ms"
+- "Ready."
+
+
 See the [LocalStack Configuration](#localstack-configuration) section for environment variables you can modify to control the behavior of LocalStack.
 
 **`TIP`** You can access the LocalStack web-based resource browser at https://app.localstack.cloud/resources
+
+**Troublehsooting**
+
+If you get DNS issues, you may have internet/networking problems. Try on a more stable internet connection.
+
+```
+cloud_in_a_box-localstack-1  | 2023-08-13T02:43:49.761  INFO --- [uest_thread)] l.services.dns_server      : Unable to get DNS result from fallback server 127.0.0.11 for domain raw.githubusercontent.com.: The DNS operation timed out.
+```
+
 
 ### Terraform
 
 Now we can run our Infrastructure as Code (IaC) to create a working _emulated_ EKS cluster locally.
 
+You should already have one terminal tab running for LocalStack, so open a new terminal tab for your Terraform commands.
+
 1. Initialize Terraform and download necessary modules
    ```shell
    make terraform init
    ```
-2. Do a _dry run_ to see what changes Terraform would make (review the `main.tf` to see the source IaC)
+
+![](images/tf-init.png)
+
+You should see:
+- "Terraform has been successfully initialized!"
+
+
+2. Do a _dry run_ to see what changes Terraform would make (review the [`main.tf`](main.tf) to see the source IaC)
    ```shell
    make terraform plan
    ```
+
+![](images/tf-plan.png)
+
+You should see:
+- "Plan: 52 to add, 0 to change, 1 to destroy." ??? (**`NOTE`** Number to add may vary slightly)
+- "Warning: AWS account ID not found for provider" ???
+
 3. Apply the changes without prompting for approval[^2]
    ```shell
    make -- terraform apply -auto-approve
@@ -48,10 +94,26 @@ At this point we have a functional EKS cluster as well as the other resources de
 
 Let's exercise some of the tools and inspect our infrastructure!
 
+**Troubleshooting**
+
+If you get errors in the terraform commands try the following:
+
+Run `make -- terraform apply -auto-approve` again after a few minutes (maybe some resources needed time to load).
+
+If that doesn't work, try running localstack again by hitting "ctrl+c" on your `make localstack` command, running `make down` then `make clean` and trying `make localstack` again.
+
+```
+│ Error: reading EC2 Network ACL (acl-2a79103e): InvalidRouteTableID.NotFound: The routeTable ID 'acl-2a79103e' does not exist
+│ 	status code: 400, request id: 3f2e7cac-164b-405b-9e8b-7e5d251444b8
+│
+│   with module.vpc.aws_default_network_acl.this[0],
+│   on .terraform/modules/vpc/main.tf line 1256, in resource "aws_default_network_acl" "this":
+│ 1256: resource "aws_default_network_acl" "this" {
+```
+
 ### AWS CLI
 
-LocalStack typically uses an
-_awslocal_ wrapper which points the official AWS CLI at the local cloud instance. We emulate that same behavior using an `awslocal` target in our 3Musketeers setup.
+LocalStack typically uses an _awslocal_ wrapper which points the official AWS CLI at the local cloud instance. We emulate that same behavior using an `awslocal` target in our 3Musketeers setup.
 
 1. Check setup and confirm connectivity with LocalStack (dummy caller / account data is returned)
    ```shell
@@ -66,7 +128,7 @@ _awslocal_ wrapper which points the official AWS CLI at the local cloud instance
    make awslocal ec2 describe-subnets
    ```
 
-Continue to inspect the infrastructure using additional AWS ClI commands.  **`NOTE`** that not
+Continue to inspect the infrastructure using additional AWS CLI commands.  **`NOTE`** that not
 _all_ AWS capabilities are mimicked by LocalStack, so you may encounter empty results or other unexpected behavior in some cases.
 
 When you're finished, move to the next section to test our local EKS cluster.
@@ -81,9 +143,11 @@ Now let's configure our k8s client to talk to the EKS cluster we created.
    ```
 
    **`TIP`** You can also run `make -- awslocal eks list-clusters --query 'clusters[0]'` to print just the name
-2. Generate a kubeconfig file `kube.config` for the cluster (replacing `<cluster-name>` with the name you copied above)
+2. Generate a kubeconfig file `kube.config` for the cluster
    ```shell
-   make -- awslocal eks update-kubeconfig --name <cluster-name> --kubeconfig kube.config
+   CLUSTER_NAME=$(make -- awslocal eks list-clusters --query 'clusters[0]')
+   
+   make -- awslocal eks update-kubeconfig --name $CLUSTER_NAME --kubeconfig kube.config
    ```
 3. Run `kubectl` to return some basic cluster information
    ```shell
