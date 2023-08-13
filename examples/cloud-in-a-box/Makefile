@@ -37,6 +37,16 @@ help:       ## Show this help
 
 # Don't define any targets if we're just trying to invoke a shell on a compose service (avoids make redefine warnings)
 ifneq ($(CMD),shell)
+prep: ## Do some preperation - pull docker images we need in later steps
+	docker pull hashicorp/terraform:1.5
+	docker pull amazon/aws-cli:2.13.8
+	docker pull alpine/k8s:1.27.4
+	docker pull alpine:3.18.3
+	docker pull gradle:jdk17-focal
+	docker pull eclipse-temurin:17.0.8_7-jdk-jammy
+	docker pull public.ecr.aws/nginx/nginx:1.23
+	docker pull localstack/localstack-pro:2.2
+
 localstack: ## Start localstack (Pro)
 	${COMPOSE} -f localstack-compose.yaml up
 
@@ -67,6 +77,36 @@ k9s:        ## Run the k9s kubernetes (CLI) management tool
                    --env AWS_ACCESS_KEY_ID=access_key \
                    --env AWS_SECRET_ACCESS_KEY=secret_key \
                    k9s --kubeconfig kube.config
+
+down: ## Stop localstack and related containers
+	${COMPOSE} -f localstack-compose.yaml down
+	${COMPOSE} down
+
+clean: ## Remove local volume folder contents
+	rm -rf volume/*
+
+get-cluster-name: ## Get the k8s cluster name
+	make -- awslocal eks list-clusters --query 'clusters[0]'
+
+cluster-status: ## Check the status of the k8s cluster
+	make -- awslocal eks update-kubeconfig --name $(CMD_ARGS) --kubeconfig kube.config
+
+check: ## Check your docker containers, images, network etc
+	echo "containers..."
+	docker ps -a
+	echo ""
+	echo "volumes..."
+	docker volume ls
+	echo ""
+	echo "volume folder ./volume"
+	ls -la volume/
+	echo ""
+	echo "images..."
+	docker images
+	echo ""
+	echo "network..."
+	docker network ls
+
 endif
 
 shell:      ## Obtain a shell in the given compose service / container (e.g. `make shell aws`)
