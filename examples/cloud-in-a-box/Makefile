@@ -32,12 +32,13 @@ CMD_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 ##  See the README.md in this directory for a guided tour of this example.  Happy Clouding! ☁️
 ##
 
-help:       ## Show this help
+help:			## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 # Don't define any targets if we're just trying to invoke a shell on a compose service (avoids make redefine warnings)
 ifneq ($(CMD),shell)
-prep: ## Do some preperation - pull docker images we need in later steps
+
+prep:			## Do some preperation - pull docker images we need in later steps
 	docker pull hashicorp/terraform:1.5
 	docker pull amazon/aws-cli:2.13.8
 	docker pull alpine/k8s:1.27.4
@@ -47,67 +48,69 @@ prep: ## Do some preperation - pull docker images we need in later steps
 	docker pull public.ecr.aws/nginx/nginx:1.23
 	docker pull localstack/localstack-pro:2.2
 
-localstack: ## Start localstack (Pro)
+localstack:		## Start localstack (Pro)
 	${COMPOSE} -f localstack-compose.yaml up
 
-terraform:  ## Run a terraform command
+terraform:		## Run a terraform command
 	${COMPOSE_RUN} --env AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
                    --env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
                    --env AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
                    --env AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} \
                    terraform $(CMD_ARGS)
 
-awslocal:   ## Run an aws CLI command against LocalStack (set the LOCALSTACK_ENDPOINT envar via the .env file etc.)
+awslocal:		## Run an aws CLI command against LocalStack (set the LOCALSTACK_ENDPOINT envar via the .env file etc.)
 	${COMPOSE_RUN} --env AWS_DEFAULT_REGION=us-west-2 \
                    --env AWS_ACCESS_KEY_ID=access_key \
                    --env AWS_SECRET_ACCESS_KEY=secret_key \
                    aws --endpoint-url=${LOCALSTACK_ENDPOINT} $(CMD_ARGS)
 
-kubectl:    ## Run a k8s tool
+kubectl:		## Run a k8s tool
 	${COMPOSE_RUN} --env AWS_DEFAULT_REGION=us-west-2 \
                    --env AWS_ACCESS_KEY_ID=access_key \
                    --env AWS_SECRET_ACCESS_KEY=secret_key \
                    k8s kubectl --kubeconfig kube.config $(CMD_ARGS)
 
-k9s-build:  ## Build the customized k9s kubernetes (CLI) management tool container image
+k9s-build:		## Build the customized k9s kubernetes (CLI) management tool container image
 	${COMPOSE} build k9s
 
-k9s:        ## Run the k9s kubernetes (CLI) management tool
+k9s:			## Run the k9s kubernetes (CLI) management tool
 	${COMPOSE_RUN} --env AWS_DEFAULT_REGION=us-west-2 \
                    --env AWS_ACCESS_KEY_ID=access_key \
                    --env AWS_SECRET_ACCESS_KEY=secret_key \
                    k9s --kubeconfig kube.config
 
-down: ## Stop localstack and related containers
+down:			## Stop localstack and related containers
 	${COMPOSE} -f localstack-compose.yaml down
 	${COMPOSE} down
 
-clean: ## Remove local volume folder contents
+clean:			## Remove local volume folder contents
+    # LocalStack
 	rm -rf volume/*
+    # Terraform
+	rm -rf .terraform
+	rm -rf .terraform.d
+	rm -f terraform.tfstate*
+	rm -f .terraform.lock.hcl
 
-get-cluster-name: ## Get the k8s cluster name
+get-cluster-name:	## Get the k8s cluster name
 	make -- awslocal eks list-clusters --query 'clusters[0]'
 
-cluster-status: ## Check the status of the k8s cluster
+cluster-status:		## Check the status of the k8s cluster
 	make -- awslocal eks update-kubeconfig --name $(CMD_ARGS) --kubeconfig kube.config
 
-check: ## Check your docker containers, images, network etc
+check:			## Check your docker containers, images, network etc
 	echo "containers..."
 	docker ps -a
-	echo ""
-	echo "volumes..."
+	echo "\nvolumes..."
 	docker volume ls
-	echo ""
-	echo "volume folder ./volume"
+	echo "\nvolume folder ./volume"
 	ls -la volume/
-	echo ""
-	echo "images..."
+	echo "\nimages..."
 	docker images
-	echo ""
-	echo "network..."
+	echo "\nnetwork..."
 	docker network ls
 
 endif
 
-shell:      ## Obtain a shell in the given compose service / container (e.g. `make shell aws`)
+shell:			## Obtain a shell in the given compose service / container (e.g. `make shell aws`)
 	${COMPOSE_RUN} --entrypoint /bin/sh $(CMD_ARGS) && exit

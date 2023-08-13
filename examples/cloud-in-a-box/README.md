@@ -6,7 +6,7 @@ It can serve as a local playground, starting point for local application develop
 
 Also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
 
-## Preperation - DO THIS FIRST
+## Preparation - DO THIS FIRST
 
 Run `make prep` to download the docker images you'll need for this example. It could take 5-10 minutes depending on your network connection, so you should run this **now**, then come back to read the rest of the readme.
 
@@ -20,7 +20,7 @@ This guide walks you through the creation of a local Kubernetes cluster and samp
 
 ### LocalStack
 
-**Note:** You'll need a LocalStack API Key. Go to https://app.localstack.cloud/ where you can sign up for a free account, and a 14 day trial. Once you start your trial you'll get an API key.
+**Note:** You'll need a LocalStack Pro API Key. Go to https://app.localstack.cloud/ where you can sign up for a free account, and a 14-day trial. Once you start your trial you'll get an API key.
 
 In this section we'll start a local AWS cloud with **many** _emulated_ services.
 
@@ -37,7 +37,7 @@ In this section we'll start a local AWS cloud with **many** _emulated_ services.
 ![](images/local-stack.png)
 
 You should see:
-- "sucessfully activated API key"
+- "successfully activated API key"
 - "Found credentials in environment variables."
 - "hypercorn.error            : Running on https://0.0.0.0:XXX (CTRL + C to quit)"
 - "Execution of "start_runtime_components" took XXX ms"
@@ -82,7 +82,7 @@ You should see:
 ![](images/tf-plan.png)
 
 You should see:
-- "Plan: 52 to add, 0 to change, 1 to destroy." ???
+- "Plan: 52 to add, 0 to change, 1 to destroy." ??? (**`NOTE`** Number to add may vary slightly)
 - "Warning: AWS account ID not found for provider" ???
 
 3. Apply the changes without prompting for approval[^2]
@@ -113,8 +113,7 @@ If that doesn't work, try running localstack again by hitting "ctrl+c" on your `
 
 ### AWS CLI
 
-LocalStack typically uses an
-_awslocal_ wrapper which points the official AWS CLI at the local cloud instance. We emulate that same behavior using an `awslocal` target in our 3Musketeers setup.
+LocalStack typically uses an _awslocal_ wrapper which points the official AWS CLI at the local cloud instance. We emulate that same behavior using an `awslocal` target in our 3Musketeers setup.
 
 1. Check setup and confirm connectivity with LocalStack (dummy caller / account data is returned)
    ```shell
