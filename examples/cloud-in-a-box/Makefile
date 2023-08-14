@@ -51,6 +51,9 @@ prep:			## Do some preperation - pull docker images we need in later steps
 localstack:		## Start localstack (Pro)
 	${COMPOSE} -f localstack-compose.yaml up
 
+tf-up:		## tf apply to bring up the k8s stack
+	make terraform init && make -- terraform apply -auto-approve
+
 terraform:		## Run a terraform command
 	${COMPOSE_RUN} --env AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
                    --env AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
@@ -84,13 +87,28 @@ down:			## Stop localstack and related containers
 	${COMPOSE} down
 
 clean:			## Remove local volume folder contents
-    # LocalStack
+	echo
+	echo "remove k3d containers and volumes that sometimes get stuck (may error if they don't exist)..."
+	-docker rm -f $(shell docker ps -aq --filter 'name=k3d-terraform-testing-')
+	-docker volume rm -f $(shell docker volume ls -q --filter "name=k3d-terraform-testing-")
+
+	echo
+	echo "remove LocalStack volume..."
 	rm -rf volume/*
-    # Terraform
-	rm -rf .terraform
-	rm -rf .terraform.d
+	
+	echo
+	echo "remove Terraform files..."
 	rm -f terraform.tfstate*
 	rm -f .terraform.lock.hcl
+	
+	echo
+	echo "[done cleaning]"
+
+	echo
+	echo [files you can manually delete if you like]
+	echo "rm -rf .terraform"
+	echo "rm -rf .terraform.d"
+	echo
 
 get-cluster-name:	## Get the k8s cluster name
 	make -- awslocal eks list-clusters --query 'clusters[0]'

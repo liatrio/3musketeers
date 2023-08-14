@@ -82,7 +82,7 @@ You should see:
 ![](images/tf-plan.png)
 
 You should see:
-- "Plan: 52 to add, 0 to change, 1 to destroy." ??? (**`NOTE`** Number to add may vary slightly)
+- "Plan: 54 to add, 0 to change, 0 to destroy." ??? (**`NOTE`** Number to add may vary slightly)
 - "Warning: AWS account ID not found for provider" ???
 
 3. Apply the changes without prompting for approval[^2]
