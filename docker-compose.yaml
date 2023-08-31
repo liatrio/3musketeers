@@ -21,7 +21,7 @@ services:
       - .:/var/opt/app
     working_dir: /var/opt/app
   k8s:
-    image: alpine/k8s:1.27.4
+    image: alpine/k8s:1.28.1
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
