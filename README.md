@@ -94,6 +94,8 @@ This software is optional, but _highly_ recommended for the best experience.
 
 ---
 
+If your environment involves a Windows VPN, proxy, or other "complex" configuration, see the [WSL](docs/WSL.md) doc for additional setup tips.
+
 🏁 That's it!  Now you can run the [Quickstart check script](#check) to validate your setup.
 
 
