@@ -1,5 +1,5 @@
 # 3 Musketeers
-This project contains examples and tools for the 3 Musketeers (https://3musketeers.io/) pattern.  It's recommended that you read up on the pattern at the official site if you're not already familiar with it to get some helpful context.
+This project contains examples and tools for the [3 Musketeers](https://3musketeersdev.netlify.app/) pattern.  It's recommended that you read up on the pattern at the official site if you're not already familiar with it to get some helpful context.
 
 ## Quickstart
 You'll need an environment with the following tools.  For help setting those up, see the [Setup](#setup) section below.
