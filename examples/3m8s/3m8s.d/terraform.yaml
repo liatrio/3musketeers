@@ -1,0 +1,10 @@
+services:
+  terraform:
+    networks:
+      - 3m8s
+    image: hashicorp/terraform:1.5
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  #    environment:
+  #      - TF_LOG=${TF_LOG}

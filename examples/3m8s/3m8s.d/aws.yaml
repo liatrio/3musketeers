@@ -1,0 +1,9 @@
+services:
+  aws:
+    networks:
+      - 3m8s
+    image: amazon/aws-cli:2.13.8
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
+  #    env_file: .env

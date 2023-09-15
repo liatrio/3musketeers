@@ -1,0 +1,8 @@
+services:
+  k8s:
+    image: alpine/k8s:1.27.4
+    networks:
+      - 3m8s
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app

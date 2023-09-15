@@ -1,0 +1,7 @@
+version: '3.8'
+
+# NOTE Command compose elements can be placed in this file
+
+# Create shared network for 3m8s (used by plugins in their compose files)
+networks:
+  3m8s:

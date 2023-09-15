@@ -1,0 +1,9 @@
+services:
+  k9s:
+    networks:
+      - 3m8s
+    build:
+      dockerfile: 3m8s.d/k9s.Dockerfile
+    volumes:
+      - .:/var/opt/app
+    working_dir: /var/opt/app
