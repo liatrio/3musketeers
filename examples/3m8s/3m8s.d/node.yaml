@@ -1,7 +1,8 @@
 services:
-  k9s:
-    build:
-      dockerfile: k9s.Dockerfile
+  node:
+    image: node:20-alpine
     volumes:
       - ..:/var/opt/app
     working_dir: /var/opt/app
+    ports:
+      - 3000:3000

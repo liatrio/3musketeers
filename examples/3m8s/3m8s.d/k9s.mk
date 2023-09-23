@@ -1,4 +1,4 @@
-k9s-build: ## Build the customized k9s kubernetes (CLI) management tool container image
+k9s-build: ## Build the customized k9s container image
 	${COMPOSE} build k9s
 
 k9s: k9s-build ## Run the k9s kubernetes (CLI) management tool
