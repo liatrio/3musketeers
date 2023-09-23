@@ -1,29 +1,17 @@
-# macOS litter
-.DS_Store
-
 # IDE
-.idea/
 *.iml
 
-# Env
-.env
+# All hidden files/dirs
+.*
 
-# Config
-.config/
-
-# Shell
-.*sh_history
+# Lock files
+*.lock
 
 # LocalStack
 volume/
 
 # k8s
-.kube/
 kube.config
-
-# Local .terraform directories
-.terraform
-.terraform.d
 
 # .tfstate files
 *.tfstate
@@ -54,7 +42,6 @@ override.tf.json
 # example: *tfplan*
 
 # Ignore CLI configuration files
-.terraformrc
 terraform.rc
 
 # Lock files
