@@ -1,6 +1,10 @@
-default: help
-
+# The ONE Portable Integrated Environment Containerized Engine 🏴‍☠️⚓️
 VERSION := "0.0.1-RC"
+
+# If the user doesn't provide any targets, show help
+ifeq ($(MAKECMDGOALS),)
+default: help
+endif
 
 # generate list of compose file snippets from plugins dir
 COMPOSE_FILES := $(wildcard 3m8s.d/*.yaml)
@@ -10,8 +14,6 @@ export COMPOSE_FILE := $(shell echo $(COMPOSE_FILES) | sed 's/ /:/g')
 # ---
 # TODO `make help terraform` should dump a long help directly from the `terraform.mk` file
 # TODO version plugins
-# TODO add ability to "install" plugin files from the repo (download via curl/wget to 3m8s.d dir)
-#  e.g. `make install aws` would download and install the aws plugin if not already installed
 # ---
 
 # Colors and Emojis
@@ -33,27 +35,27 @@ COMPOSE := docker compose -p 3m8s
 # NOTE we're using the current user's UID:GID and $HOME in the container context
 COMPOSE_RUN := ${COMPOSE} run -u $$(id -u):$$(id -g) --env HOME="." --env USER=$${USER} --rm --service-ports
 
+# Hide orphan warning message
 # NOTE this setting requires Docker Compose v2 to work
 export COMPOSE_IGNORE_ORPHANS := True
 
 # Prevent default echo of commands and "[target] is up to date" messages
 .SILENT:
 
-# NOTE .PHONY denotes that the target does _not_ correspond to any local file of the same name (true of all our targets)
+# Tell make that whatever targets the user requested shouldn't be correlated with any local file's existence or status
 .PHONY: $(MAKECMDGOALS)
 
 # Extract first target passed to make
 TARGET := $(wordlist 1,1,$(MAKECMDGOALS))
-
 # Extract first argument to target
 ARG := $(wordlist 2,2,$(MAKECMDGOALS))
-
-# Collect all arguments after target
+# Collect all arguments after target (including the first)
 CMD_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
-# Plugin files (used only if `plugin` target is invoked but defined here to avoid $(eval)
+# Plugin files (used only if `plugin` target is invoked but defined here to avoid call $(eval) fxn) 👿
 PLUGIN_MAKEFILE := "3m8s.d/$(ARG).mk"
 PLUGIN_COMPOSE_FILE := "3m8s.d/$(ARG).yaml"
+PLUGIN_DOWNLOAD_BASE := "https://github.com/liatrio/3musketeers/raw/main/examples/3m8s/3m8s.d/"
 
 # Obtain list of container images defined in plugin Compose YAML files (if any exist)
 ifneq ($(strip $(COMPOSE_FILES)),)
@@ -70,11 +72,32 @@ endif
 ## 3Musketeers (3m8s) Toolkit 🛠️
 ## The targets/commands below can be ran via `make <target>` (e.g. `make help`).
 
-# Don't define any targets if we're just trying to invoke a shell on a compose service (avoids make redefine warnings)
-ifneq ($(TARGET),shell)
+# TODO Prevent built-in 'help' target from running when user runs `make aws help`
+# TODO cleanup rearranged targets which resolved `make terraform version` issue where `make version` would also run
+
+# TODO explain the block below and mark the start/end of conditionals (or try nesting them)
+BUILTIN_TARGETS := alias debug install plugin pull shell version
+# If the requested TARGET is not a built-in, include plugin files to check them for valid targets
+ifeq (,$(filter $(TARGET),$(BUILTIN_TARGETS)))
 -include $(wildcard 3m8s.d/*.mk)
+
+# Generate a list of plugin targets (plus 'help' which needs plugins included to work properly)
+# TODO use append here (PLUGIN_TARGETS := help, then PLUGIN_TARGETS += help $(shell... (eliminates conditional block)
+ifneq ($(wildcard 3m8s.d/*.mk),)
+PLUGIN_TARGETS := help $(shell grep -h '^[^.%][-a-zA-Z0-9]*:' 3m8s.d/*.mk | cut -d ':' -f 1)
+# If we don't have any plugins installed, just include help
+else
+PLUGIN_TARGETS := help
 endif
 
+# If the user requested a target, but it's not in the list of PLUGIN_TARGETS, prompt them to install it
+ifeq (,$(filter $(TARGET), $(PLUGIN_TARGETS)))
+.DEFAULT:
+	[ -z $(TARGET) ] || echo "Target '$(TARGET)' not defined.  Do you need to 'make install $(TARGET)'?";
+endif
+
+# User requested a built-in target, define and let make handle
+else
 alias: ## Shell alias help
 	@echo "Copy and paste the following into your shell to enable commands like 'make aws --version' to work \
 			without having to type 'make --' (put in your shell startup file to make permanent):\n"
@@ -85,16 +108,36 @@ debug: ## Dump some debugging info
 	@echo "COMPOSE_FILES: $(COMPOSE_FILES)"
 	@echo "COMPOSE_FILE: $(COMPOSE_FILE)"
 
-help: ## Show this help
-	# Display header
-	@awk 'BEGIN {FS = "^## "} /^## .*/ {printf "${COLOR_BLUE}%-1s${COLOR_RESET}\n", $$2}' $(MAKEFILE_LIST)
-	# Display targets
-	@awk 'BEGIN {FS = ":.*?## "} \
-		!/\s*@.*/ && /:.*?## / {printf "${COLOR_GREEN}%-30s${COLOR_RESET}%s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+install: ## Install a plugin (e.g. `make install aws`)
+	# TODO 'make uninstall' (remove 3m8s.d/$(ARG).*
+	# TODO use a list (mk, yaml, Dockerfile) (maybe even a manifest in the main repo listing plugin files)
+	# TODO handle case where plugin already installed (prompt user?)
+	#  Need this to be able to list remote plugins too (an index file).  Once this is in, remove the curl -f and just
+	#  iterate over the list in the manifest (don't need to explicitly list each file)
+	#  `make plugin` needs to generate the manifest and instructions also
+	@if [ -z $(ARG) ]; then \
+		echo "Plugin name required! (e.g. 'make install aws')";\
+		exit 1;\
+	fi
+
+	# Download plugin files with curl or ask user to install it
+	#  - fail silently if Dockerfile not present since not all plugins will have one (NOTE this also prevents the
+	#	 progress bar from showing)
+	@ if which curl >/dev/null 2>&1; then \
+   		echo "Downloading plugin files..."; \
+   		cd 3m8s.d; \
+   		curl --progress-bar -L -O "$(PLUGIN_DOWNLOAD_BASE)/$(ARG).mk"; \
+   		curl --progress-bar -L -O "$(PLUGIN_DOWNLOAD_BASE)/$(ARG).yaml"; \
+   		curl --progress-bar -fL -O "$(PLUGIN_DOWNLOAD_BASE)/$(ARG).Dockerfile" 2>/dev/null || true; \
+   	else \
+   	  	echo "Can't find 'curl'.  Please install it and try again."; \
+   	  	exit 1; \
+   	fi
+	@echo "$(ARG) plugin installed! $(EMOJI_TADA)"
 
 plugin: ## Generate plugin scaffolding (e.g. `make plugin node`)
 	@if [ -z $(ARG) ]; then \
-		echo "Plugin name required! (e.g. 'make plugin some-name')";\
+		echo "Plugin name required! (e.g. 'make plugin my-plugin')";\
 		exit 1;\
 	fi
 
@@ -135,7 +178,20 @@ pull: ## Pull all enabled plugin images
 	@echo "${COLOR_YELLOW}All images pulled ${COLOR_RESET}${EMOJI_TADA}"
 
 shell: ## Launch a shell in the given target (e.g. `make shell aws`)
+	@if [ -z $(ARG) ]; then \
+		echo "Plugin name required! (e.g. 'make shell aws')";\
+		exit 1;\
+	fi
 	${COMPOSE_RUN} --entrypoint /bin/sh $(CMD_ARGS) && exit
 
 version: ## Display 3Musketeers Toolkit version
 	@echo $(VERSION)
+endif
+
+# Help will always be given to those who ask for it 🪄 (this target is _always_ defined)
+help: ## Show this help
+	# Display header
+	@awk 'BEGIN {FS = "^## "} /^## .*/ {printf "${COLOR_BLUE}%-1s${COLOR_RESET}\n", $$2}' $(MAKEFILE_LIST)
+	# Display targets
+	@awk 'BEGIN {FS = ":.*?## "} \
+		!/\s*@.*/ && /:.*?## / {printf "${COLOR_GREEN}%-30s${COLOR_RESET}%s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
