@@ -1,10 +1,12 @@
-# ☁️ Cloud-in-a-Box ☁️
+# ☁️ Cloud-in-a-Box ☁️ for Local Development
 
-This example provides a working AWS cloud via LocalStack[^1] along with an EKS Kubernetes (k8s) cluster created via Terraform and helpful management tools.
+This example provides a working AWS cloud on your local workstation via LocalStack[^1] along with an EKS Kubernetes (k8s) cluster created via Terraform and helpful management tools.
 
 It can serve as a local playground, starting point for local application development and testing, or just a way to get more familiar with containers, Kubernetes, terraform, and the other tools used here.
 
 Also, **_everything_** runs in containers, so you only need the usual [3musketeers setup](../../README.md) to use this example!
+
+**Note:** The use of 3 Musketeers for Local Development is not an endorsement for using the pattern in CI/CD pipelines. How to create scalable CI/CD pipelines and templates with automated governance is out of scope for this repo and will depend on your organizaitons specific strategy for CI/CD at scale.
 
 ## Preparation - DO THIS FIRST
 
