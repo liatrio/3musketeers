@@ -26,7 +26,7 @@ services:
       - .:/var/opt/app
     working_dir: /var/opt/app
   terraform:
-    image: hashicorp/terraform:1.5
+    image: hashicorp/terraform:1.7
     volumes:
       - .:/var/opt/app
     working_dir: /var/opt/app
