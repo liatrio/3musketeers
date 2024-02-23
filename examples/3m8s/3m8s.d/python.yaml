@@ -1,0 +1,7 @@
+services:
+  python:
+    build:
+      dockerfile: python.Dockerfile
+    volumes:
+      - ..:/var/opt/app
+    working_dir: /var/opt/app
