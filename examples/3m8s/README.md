@@ -5,7 +5,10 @@ If you don't have 3Musketeers set up yet, see the [top-level README](../../READM
 
 ## ⚡️ Quickstart
 1. Copy [Makefile](Makefile) to your project directory
-2. Run `make install <plugin>` to install desired plugins into your project's `3m8s.d` dir
+   ```shell
+   wget https://raw.githubusercontent.com/liatrio/3musketeers/main/examples/3m8s/Makefile
+   ```
+3. Run `make install <plugin>` to install desired plugins into your project's `3m8s.d` dir
 
 That's it!  Run `make` to see help for the newly installed plugins.  See this repo's [3m8s.d](3m8s.d) dir for available plugins.
 
